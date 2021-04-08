@@ -19,8 +19,6 @@ class UserDB(db.Model):
 		self.username=username
 		self.password=password
 
-
-
 class ProjectInfoDB(db.Model):
 	__bind_key__='projectinfodb'
 	projectUserID=db.Column(db.Integer,primary_key=True,nullable=False)
