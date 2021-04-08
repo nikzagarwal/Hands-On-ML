@@ -6,8 +6,19 @@
 {% endblock %}
 
 {% block body %}
-	<h3>The number of the model goes here : {{myMLobject.serialNumber}}<h3>
-	<h3>The name of the model goes here : {{myMLobject.modelname}}<h3>
-	<h3>The params of the model goes here : {{myMLobject.modelparams}}<h3>
-	<h3>The metrics of the model goes here : {{myMLobject.modelmetrics}}<h3>
+	<h3>The number of the model goes here : {{myMLObject.serialNumber}}<h3>
+	<h3>The name of the model goes here : {{myMLObject.modelname}}<h3>
+	<h3>The params of the model goes here : {{myMLObject.modelparams}}<h3>
+	<h3>The metrics of the model goes here : {{myMLObject.modelmetrics}}<h3>
+	
+	<h3>The ID of the user is : {{myUserObject.userID}}<h3>
+	<h3>The name of the user is : {{myUserObject.username}}<h3>
+	<h3>The password of the user is : {{myUserObject.password}}<h3>
+	
+	<div class="form">
+		<form action="/update" method="POST">
+			<input type="submit" value="Add to DB">
+		</form>
+	</div>
+
 {% endblock %}
