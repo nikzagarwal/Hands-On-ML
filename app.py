@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 import requests
 import random
+import pickle
 
 
 app=Flask(__name__)
@@ -11,7 +12,7 @@ app.config['SQLALCHEMY_BINDS']={'datadb':'sqlite:///data.db','trainedmodeldb':'s
 db=SQLAlchemy(app)
 
 class UserDB(db.Model):
-	userID=db.Column(db.Integer,primary_key=True,nullable=False)
+	userID=db.Column(db.Integer,primary_key=True)
 	username=db.Column(db.String(150),nullable=False)
 	password=db.Column(db.String(150),nullable=False)
 	def __init__(self,userID,username,password):
@@ -64,23 +65,41 @@ db.create_all()
 
 myUserObject=UserDB(15,"UserTheGreat","PasswordTheStrong")
 myMLObject=TrainedModelsDB("KNN","Params","Weights","Metrics")
+
 	
+infile = open('filesfolder/modelnb.pkl','rb')
+new_dict = pickle.load(infile)
+infile.close()
+type(new_dict)
+testdbobject=DataDB(45,new_dict,new_dict)
+
 @app.route("/")
 def myfunction():
-	return render_template("index.html",myUserObject=myUserObject,myMLObject=myMLObject)
+	return render_template("index.html",myUserObject=myUserObject,myMLObject=myMLObject,testdbobject=testdbobject)
 
-@app.route("/update",methods=["POST"])
+@app.route('/second',methods=['POST'])
+def secondfunction():
+	myUserObject=UserDB(15,"UserTheGreat","PasswordTheStrong")
+	db.session.add(myUserObject)
+	db.session.commit()
+	return "This is the second page"
+
+
+
+'''
+@app.route("/update",methods=['POST'])
 def myDBfunction():
-	mycurrentuser=UserDB.query.get_or_404(myUserObject.userID)
+	#mycurrentuser=UserDB.query.get_or_404(userID)
 	if request.method=='POST':
 		try:
-			db.session.commit(trainedmodeldb)
+			db.session.add(myUserObject)
+			db.session.commit()
 			return redirect('/')
 		except:
 			return 'There was an error updating that task'
 	else:
-		return render_template('index.html',myMLObject=myMLObject,myUserObject=myUserObject)
-
+		return render_template('index.html',myUserObject=myUserObject,myMLObject=myMLObject,testdbobject=testdbobject)
+'''
 
 if __name__=='__main__':
 	app.run(debug=True)
