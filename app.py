@@ -33,7 +33,7 @@ class ProjectsDB(db.Model):
 	projectID=db.Column(db.Integer,primary_key=True,nullable=False)
 	dataID=db.Column(db.Integer,nullable=False)
 	projectname=db.Column(db.String(100))
-	projectdata=db.Column(db.PickleType)			#This is PickleType Can be useful
+	projectdata=db.Column(db.PickleType)		#This is PickleType - Can be useful
 	def __init__(self,projectID,dataID,projectname,projectdata):
 		self.projectID=projectID
 		self.dataID=dataID
@@ -67,10 +67,10 @@ myUserObject=UserDB(15,"UserTheGreat","PasswordTheStrong")
 myMLObject=TrainedModelsDB("KNN","Params","Weights","Metrics")
 
 	
-infile = open('filesfolder/modelnb.pkl','rb')
+infile = open('pickle_folder/modelnb.pkl','rb')
 new_dict = pickle.load(infile)
 infile.close()
-type(new_dict)
+#type(new_dict)
 testdbobject=DataDB(45,new_dict,new_dict)
 
 @app.route("/")
@@ -79,8 +79,14 @@ def myfunction():
 
 @app.route('/second',methods=['POST'])
 def secondfunction():
-	myUserObject=UserDB(15,"UserTheGreat","PasswordTheStrong")
+	myUserObject=UserDB(1568,"UserTheGreat","PasswordTheStrong")
 	db.session.add(myUserObject)
+	db.session.commit()
+	myMLObject=TrainedModelsDB("RandomForest2","Params","Weights","Metrics")
+	db.session.add(myMLObject)
+	db.session.commit()
+	testdbobject=DataDB(454,new_dict,new_dict)
+	db.session.add(testdbobject)
 	db.session.commit()
 	return "This is the second page"
 
