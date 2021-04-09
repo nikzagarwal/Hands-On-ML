@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block title %} Home{% endblock title %}
+{% block body %}
+
+
+
+<!-- result  -->
+<section>
+    <div class="goalbox">
+        <h1>Model Creation</h1>
+        <p>" In this section you can choose to see cleaned data and create model for this project"
+        </p>
+        <br>
+    </div>
+
+<div class="border border-light p-3 mb-4">
+<span class="row">
+    <div class="text-center col-sm-6 col-md-6 col-lg-6">
+        <button type="button" class="but" style="float: none;" name="load_cdata" id="load_cdata" class="btn btn-primary">Load Clean
+            Data</button>
+    </div>
+    
+    <div class="text-center col-sm-6 col-md-6 col-lg-6">
+        <button type="button" name="load_cdata" class="but" style="float: none;" id="load_cdata" class="btn btn-primary">Create Model</button>
+    </div>
+</span>
+
+<div class="container">
+
+    
+    <form name='model' method = 'POST',action=#>
+        <div class="row">
+            <div class="col-50">
+        <input type="radio", value='classification',name='classification', onclick="">Classification
+        <input type="radio", value='regression',name='regression',onclick=''>Regression
+        <br>
+        </div>
+        </div>
+        <select name="model">
+            <option value='naivebayes'>naivebayes</option>
+            <!-- var_smoothing=1e-9 -->
+            <option value='knn'>Knn</option>
+            <!-- n_neighbors = 5 ,leaf_size = 30 -->
+            <option value='decisiontrees'>decisiontrees</option>
+            <!-- max_depth=None,min_samples_split=2 -->
+            <option value='randomforest'>randomforest</option>
+            <!-- n_estimators=500,max_leaf_nodes=None,min_samples_split=2 -->
+            <option value='linearreg'>linearreg</option>
+
+            <option value='decisiontreereg'>decisiontreereg</option>
+            <!-- max_depth=None,random_state=42,min_samples_split=2 -->
+            <option value='randomforestreg'>randomforestreg</option>  
+            <!-- n_estimators=500,max_leaf_nodes=None -->
+            <option value='knnreg'>knnreg</option>
+            <!-- n_neighbors = 5 ,leaf_size = 30 -->
+        </select>
+        <br>
+        <label for="var_smoothing">var_smoothing</label><br>
+        <input name="var_smoothing" type="number" maxlength="150" placeholder="enter a number"><br>
+        <label for="n_neighbors">n_neighbors</label><br>
+        <input name="n_neighbors" type="number"  placeholder="enter a number "><br>
+        <label for="leaf_size">leaf_size</label><br>
+        <input name="leaf_size" type="number" placeholder="enter a number "><br>
+        <label for="max_depth">max_depth</label><br>
+        <input name="max_depth" type="number" placeholder="enter a number by default None"><br>
+        <label for="min_samples_split">min_samples_split</label><br> 
+        <input name="min_samples_split" type="text" placeholder="enter a number by default 2"><br>
+        <label for="n_estimators">n_estimators</label><br>
+        <input name="n_estimators" type="text" placeholder="enter a number by default 100"><br>
+        <label for="random_state">random state</label><br>
+        <input name="random_state" type="number" placeholder="enter a number by default 42"> <br>
+        <input type="submit"> 
+    </form>
+</div>
+    
+    <script>
+        const x = JSON.parse('{{ newfile.dftrain | tojson }}');
+        // console.log(x)
+        $(document).ready(function () {
+            $('#load_cdata').click(function () {
+                $.ajax({
+                    url: x,
+                    dataType: "text",
+                    success: function (data) {
+                        var csvdata = data.split(/\r?\n|\r/);
+                        var ctable_data = '<table class="table table-bordered table-striped">';
+                        for (var count = 0; count < (csvdata.length * 0.1); count++) {
+                            var cell_data = csvdata[count].split(",");
+                            ctable_data += '<tr>';
+                            for (var cell_count = 0; cell_count < cell_data.length; cell_count++) {
+                                if (count === 0) {
+                                    ctable_data += '<th>' + cell_data[cell_count] + '</th>';
+                                }
+                                else {
+                                    ctable_data += '<td>' + cell_data[cell_count] + '</td>';
+                                }
+                            }
+                            ctable_data += '</tr>';
+                        }
+                        ctable_data += '</table>';
+                        $('#cdata_table').html(ctable_data);
+                    }
+                });
+            });
+
+        });
+    </script>
+
+
+    <div id="cdata_table" style="margin: 1em 5em 1em 5em;">
+    </div>
+</div>
+
+</section>
+<!-- End of goal section  -->
+<br><br>
+{% endblock body %}

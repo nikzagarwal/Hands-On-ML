@@ -1,9 +1,10 @@
-from flask import Flask, render_template , request
+from flask import Flask, render_template , request, url_for
 from preprocess import *
 from flask_sqlalchemy import SQLAlchemy
+from random import randint
 
 app = Flask(__name__)
-
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db=SQLAlchemy(app)
@@ -12,7 +13,9 @@ db=SQLAlchemy(app)
 
 class Project(db.Model):
     sno=db.Column(db.Integer,primary_key=True)
-    dataid=db.relationship('Data',backref='owner')
+    name=db.Column(db.String(30),nullable=False)
+    dataid=db.relationship('Data',backref='nameid')
+
 
 class Data(db.Model):
     sno=db.Column(db.Integer,primary_key=True)
@@ -23,16 +26,23 @@ class Data(db.Model):
     owner_id=db.Column(db.Integer,db.ForeignKey('project.sno'))
    
 
-    def __repr__(self) -> str:
-        return f"{self.sno}"
 
 @app.route('/')
-def home():
-   return render_template('data.html')
+def home():       
+   urldata=url_for('static', filename='cardata.csv')
+   return render_template('data.html',urldata=urldata)
 
-@app.route('/<int:sno>',methods=['GET','POST'])
-def data(sno):
+@app.route('/model')
+def model():       
+   return render_template('newmodel.html')
+
+@app.route('/',methods=['GET','POST'])
+def data():
    if request.method=='POST':
+      idi=str(randint(0,99999999))
+      x=Project(name=idi)
+      db.session.add(x)
+      db.session.commit()
       cols=request.form['colno']
       rows=request.form['rowno']
       changetype=request.form['encodetype']
@@ -40,11 +50,14 @@ def data(sno):
       scaling=request.form['scaletype']
       scalingcol=request.form['scale']
       targetcol=request.form['target']
-      clean(cols=cols,rows=rows,changetype=changetype,encodecol=encodecol,scaling=scaling,scalingcol=scalingcol,targetcol=targetcol,dftest="",db=db)
-      return redirect('data.html')
-   return render_template('data.html',sno=sno)
+      clean(cols=cols,rows=rows,changetype=changetype,encodecol=encodecol,scaling=scaling,scalingcol=scalingcol,targetcol=targetcol,dftest="",sno=idi)
+      path="/static/data/"+idi
+      newfile=Data(dftrain=path+"/dftrain.csv",ytrain=path+"/ytrain.csv",dftest=path+"/dftest.csv",ytest=path+"/ytest.csv",nameid=x)
+      db.session.add(newfile)
+      db.session.commit()
+      return render_template('model.html',newfile=newfile)
 
 
 
 if __name__ == '__main__':
-   app.run(debug=True)
+   app.run(debug=True )
