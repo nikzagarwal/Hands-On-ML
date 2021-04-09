@@ -30,28 +30,38 @@ class Data(db.Model):
 @app.route('/')
 def home():       
    urldata=url_for('static', filename='cardata.csv')
-   return render_template('data.html',urldata=urldata)
+   return render_template('create.html')
 
-@app.route('/model')
-def model():       
-   return render_template('newmodel.html')
+@app.route('/create')
+def create():       
+   return render_template('create.html')
 
-@app.route('/',methods=['GET','POST'])
+
+@app.route('/clean',methods=['GET','POST'])
+def clean():
+    if request.method=='POST':
+      name=request.form['name']
+      train=request.form['train']
+      urldata=url_for('static', filename='cardata.csv')
+      return render_template('data.html',urldata=urldata)
+
+       
+@app.route('/data',methods=['GET','POST'])
 def data():
    if request.method=='POST':
-      idi=str(randint(0,99999999))
+      prono=str(randint(0,99999999))
       x=Project(name=idi)
       db.session.add(x)
       db.session.commit()
       cols=request.form['colno']
-      rows=request.form['rowno']
+      # rows=request.form['rowno']
       changetype=request.form['encodetype']
       encodecol=request.form['encode']
       scaling=request.form['scaletype']
       scalingcol=request.form['scale']
       targetcol=request.form['target']
-      clean(cols=cols,rows=rows,changetype=changetype,encodecol=encodecol,scaling=scaling,scalingcol=scalingcol,targetcol=targetcol,dftest="",sno=idi)
-      path="/static/data/"+idi
+      clean(cols=cols,rows="",changetype=changetype,encodecol=encodecol,scaling=scaling,scalingcol=scalingcol,targetcol=targetcol,dftest="",sno=prono)
+      path="/static/data/"+prono
       newfile=Data(dftrain=path+"/dftrain.csv",ytrain=path+"/ytrain.csv",dftest=path+"/dftest.csv",ytest=path+"/ytest.csv",nameid=x)
       db.session.add(newfile)
       db.session.commit()

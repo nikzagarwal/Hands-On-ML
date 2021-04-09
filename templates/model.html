@@ -13,103 +13,195 @@
         <br>
     </div>
 
-<div class="border border-light p-3 mb-4">
-<span class="row">
-    <div class="text-center col-sm-6 col-md-6 col-lg-6">
-        <button type="button" class="but" style="float: none;" name="load_cdata" id="load_cdata" class="btn btn-primary">Load Clean
-            Data</button>
-    </div>
-    
-    <div class="text-center col-sm-6 col-md-6 col-lg-6">
-        <button type="button" name="load_cdata" class="but" style="float: none;" id="load_cdata" class="btn btn-primary">Create Model</button>
-    </div>
-</span>
+    <div class="border border-light p-3 mb-4">
+        <span class="row">
+            <div class="text-center col-sm-6 col-md-6 col-lg-6">
+                <button type="button" class="but" style="float: none;" name="load_cdata" id="load_cdata"
+                    class="btn btn-primary">Load Clean
+                    Data</button>
+            </div>
 
-<div class="container">
-
-    
-    <form name='model' method = 'POST',action=#>
-        <div class="row">
-            <div class="col-50">
-        <input type="radio", value='classification',name='classification', onclick="">Classification
-        <input type="radio", value='regression',name='regression',onclick=''>Regression
-        <br>
-        </div>
-        </div>
-        <select name="model">
-            <option value='naivebayes'>naivebayes</option>
-            <!-- var_smoothing=1e-9 -->
-            <option value='knn'>Knn</option>
-            <!-- n_neighbors = 5 ,leaf_size = 30 -->
-            <option value='decisiontrees'>decisiontrees</option>
-            <!-- max_depth=None,min_samples_split=2 -->
-            <option value='randomforest'>randomforest</option>
-            <!-- n_estimators=500,max_leaf_nodes=None,min_samples_split=2 -->
-            <option value='linearreg'>linearreg</option>
-
-            <option value='decisiontreereg'>decisiontreereg</option>
-            <!-- max_depth=None,random_state=42,min_samples_split=2 -->
-            <option value='randomforestreg'>randomforestreg</option>  
-            <!-- n_estimators=500,max_leaf_nodes=None -->
-            <option value='knnreg'>knnreg</option>
-            <!-- n_neighbors = 5 ,leaf_size = 30 -->
-        </select>
-        <br>
-        <label for="var_smoothing">var_smoothing</label><br>
-        <input name="var_smoothing" type="number" maxlength="150" placeholder="enter a number"><br>
-        <label for="n_neighbors">n_neighbors</label><br>
-        <input name="n_neighbors" type="number"  placeholder="enter a number "><br>
-        <label for="leaf_size">leaf_size</label><br>
-        <input name="leaf_size" type="number" placeholder="enter a number "><br>
-        <label for="max_depth">max_depth</label><br>
-        <input name="max_depth" type="number" placeholder="enter a number by default None"><br>
-        <label for="min_samples_split">min_samples_split</label><br> 
-        <input name="min_samples_split" type="text" placeholder="enter a number by default 2"><br>
-        <label for="n_estimators">n_estimators</label><br>
-        <input name="n_estimators" type="text" placeholder="enter a number by default 100"><br>
-        <label for="random_state">random state</label><br>
-        <input name="random_state" type="number" placeholder="enter a number by default 42"> <br>
-        <input type="submit"> 
-    </form>
-</div>
-    
-    <script>
-        const x = JSON.parse('{{ newfile.dftrain | tojson }}');
-        // console.log(x)
-        $(document).ready(function () {
-            $('#load_cdata').click(function () {
-                $.ajax({
-                    url: x,
-                    dataType: "text",
-                    success: function (data) {
-                        var csvdata = data.split(/\r?\n|\r/);
-                        var ctable_data = '<table class="table table-bordered table-striped">';
-                        for (var count = 0; count < (csvdata.length * 0.1); count++) {
-                            var cell_data = csvdata[count].split(",");
-                            ctable_data += '<tr>';
-                            for (var cell_count = 0; cell_count < cell_data.length; cell_count++) {
-                                if (count === 0) {
-                                    ctable_data += '<th>' + cell_data[cell_count] + '</th>';
-                                }
-                                else {
-                                    ctable_data += '<td>' + cell_data[cell_count] + '</td>';
-                                }
-                            }
-                            ctable_data += '</tr>';
-                        }
-                        ctable_data += '</table>';
-                        $('#cdata_table').html(ctable_data);
-                    }
+            <div class="text-center col-sm-6 col-md-6 col-lg-6" >
+                <button type="button" name="load_model" class="but" style="float: none;" id="load_model"
+                    class="btn btn-primary">Create Model</button>
+            </div>
+            <script>
+                $(document).ready(function () {
+                    $('#load_model').click(function () {
+                        document.getElementById("modelform").style.display = "block";
+                    });
                 });
+
+            </script>
+        </span>
+
+        <div class="container" id="modelform">
+
+
+            <form name='model' method='POST' ,action=#>
+                <div class="row">
+                    <div class="row">
+                        <div class="col-50" style="font-size: large;">
+                            <label for="type">Which type of data is it?</label>
+                        </div>
+                        <div class="col-50" style="font-size:large;">
+                            <select id="modeltype" onchange="myFunction()">
+                                <option value="classification">Classification</option>
+                                <option value="regression">Regression</option>
+                            </select>
+                            <script>
+
+                            </script>
+                        </div>
+                    </div>
+                    <div class="row" id="classimodel">
+                        <div class="col-50" style="font-size: large;">
+                            <label for="type">Which model you want?</label>
+                        </div>
+                        <div class="col-50" style="font-size:large">
+                            <div>
+                                <select name="classificationmodel" onchange="myFunction2(this)">
+                                    <option value='naivebayes'>Naive Bayes</option>
+                                    <!-- var_smoothing=1e-9 -->
+                                    <option value='knn'>K-Nearest Neighbor</option>
+                                    <!-- n_neighbors = 5 ,leaf_size = 30 -->
+                                    <option value='decisiontrees'>Decision Trees</option>
+                                    <!-- max_depth=None,min_samples_split=2 -->
+                                    <option value='randomforest'>Random Forest</option>
+                                    <!-- n_estimators=500,max_leaf_nodes=None,min_samples_split=2 -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="regmodel">
+                        <div class="col-50" style="font-size: large;">
+                            <label for="type">Which type of data is it?</label>
+                        </div>
+                        <div class="col-50" style="font-size:large">
+                            <div>
+                                <select name="regressionmodel" onchange="myFunction3(this)">
+                                    <option value='linearreg'>Linear Regression</option>
+
+                                    <option value='decisiontreereg'>Decision Tree Regression</option>
+                                    <!-- max_depth=None,random_state=42,min_samples_split=2 -->
+                                    <option value='randomforestreg'>Random Forest Regression</option>
+                                    <!-- n_estimators=500,max_leaf_nodes=None -->
+                                    <option value='knnreg'>K-Nearest Neighborn Regression</option>
+                                    <!-- n_neighbors = 5 ,leaf_size = 30 -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <h2 style="font-weight: bold;">Parameters</h2>
+                <br>
+
+                <div class="row" id="n">
+                    <div class="col-50">
+                        <label for="var_smoothing">var_smoothing</label>
+                    </div>
+                    <div class="col-50">
+                        <input name="var_smoothing" type="number" maxlength="150" placeholder="enter a number">
+                    </div>
+                </div>
+
+                <div class="row" id="k">
+                    <div class="col-50">
+                        <label for="n_neighbors">n_neighbors</label>
+                    </div>
+                    <div class="col-50">
+                        <input name="n_neighbors" type="number" placeholder="enter a number ">
+                    </div>
+                </div>
+
+                <div class="row" id="k">
+                    <div class="col-50">
+                        <label for="leaf_size">leaf_size</label>
+                    </div>
+                    <div class="col-50">
+                        <input name="leaf_size" type="number" placeholder="enter a number ">
+                    </div>
+                </div>
+
+                <div class="row" id="d">
+                    <div class="col-50">
+                        <label for="max_depth">max_depth</label>
+                    </div>
+                    <div class="col-50">
+                        <input name="max_depth" type="number" placeholder="enter a number by default None">
+                    </div>
+                </div>
+
+                <div class="row" id="dr">
+                    <div class="col-50">
+                        <label for="min_samples_split">min_samples_split</label>
+                    </div>
+                    <div class="col-50">
+                        <input name="min_samples_split" type="number" placeholder="enter a number (default is 2)">
+                    </div>
+                </div>
+
+                <div class="row" id="r">
+                    <div class="col-50">
+                        <label for="n_estimators">n_estimators</label>
+                    </div>
+                    <div class="col-50">
+                        <input name="n_estimators" type="number" placeholder="enter a number by (default is 100)">
+                    </div>
+                </div>
+
+                <div class="row" id="r">
+                    <div class="col-50">
+                        <label for="max_leaf_nodes">max_leaf_nodes</label>
+                    </div>
+                    <div class="col-50">
+                        <input name="max_leaf_nodes" type="number" placeholder="enter a number (default is None)">
+                    </div>
+                </div>
+                <div class="row ">
+                    <button type="submit" class="but">Create</button>
+                </div>
+            </form>
+        </div>
+
+        <script>
+            const x = JSON.parse('{{ newfile.dftrain | tojson }}');
+            // console.log(x)
+            $(document).ready(function () {
+                $('#load_cdata').click(function () {
+                    $.ajax({
+                        url: x,
+                        dataType: "text",
+                        success: function (data) {
+                            var csvdata = data.split(/\r?\n|\r/);
+                            var ctable_data = '<table class="table table-bordered table-striped">';
+                            for (var count = 0; count < (csvdata.length * 0.1) && count < 50; count++) {
+                                var cell_data = csvdata[count].split(",");
+                                ctable_data += '<tr>';
+                                for (var cell_count = 0; cell_count < cell_data.length; cell_count++) {
+                                    if (count === 0) {
+                                        ctable_data += '<th>' + cell_data[cell_count] + '</th>';
+                                    }
+                                    else {
+                                        ctable_data += '<td>' + cell_data[cell_count] + '</td>';
+                                    }
+                                }
+                                ctable_data += '</tr>';
+                            }
+                            ctable_data += '</table>';
+                            $('#cdata_table').html(ctable_data);
+                        }
+                    });
+                });
+
             });
-
-        });
-    </script>
+        </script>
 
 
-    <div id="cdata_table" style="margin: 1em 5em 1em 5em;">
+        <div id="cdata_table" style="margin: 1em 5em 1em 5em;">
+        </div>
     </div>
-</div>
 
 </section>
 <!-- End of goal section  -->

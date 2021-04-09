@@ -19,7 +19,7 @@
 
 
         <div class="container">
-            <form name="data" action="/" method="POST">
+            <form name="data" action="/data" method="POST">
                 <div class="row">
                     <div class="col-50">
                         <label for="colno">Which columns you want to drop?</label>
@@ -28,14 +28,14 @@
                         <input type="text" id="colno" name="colno" placeholder="Column no. seperated by comma">
                     </div>
                 </div>
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col-50">
                         <label for="rowno">Which rows you want to drop?</label>
                     </div>
                     <div class="col-50">
                         <input type="text" id="rowno" name="rowno" placeholder="Row no. seperated by comma">
                     </div>
-                </div>
+                </div> -->
 
 
                 <div class="row">
@@ -115,7 +115,7 @@
                             success: function (data) {
                                 var csvdata = data.split(/\r?\n|\r/);
                                 var table_data = '<table class="table table-bordered table-striped">';
-                                for (var count = 0; count < (csvdata.length * 0.1); count++) {
+                                for (var count = 0; count < (csvdata.length * 0.1)&& count<50; count++) {
                                     var cell_data = csvdata[count].split(",");
                                     table_data += '<tr>';
                                     for (var cell_count = 0; cell_count < cell_data.length; cell_count++) {

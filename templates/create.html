@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %} Home{% endblock title %}
+{% block body %}
+
+
+
+<!-- result  -->
+<section>
+    <div class="goalbox">
+        <h1>Project Creation</h1>
+        <p>" In this section you can create a new project by giving your own data to us"
+        </p>
+        <br>
+    </div>
+
+    <div class="container">
+        <form name="data" action="/clean" method="POST">
+            <div class="row">
+                <div class="col-50">
+                    <label for="name">Name of your project?</label>
+                </div>
+                <div class="col-50">
+                    <input type="text" id="name" name="name" placeholder="Name your project..." required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-50">
+                    <label for="train">Enter training data</label>
+                </div>
+                <div class="col-50" style="padding: 0.8em;">
+                    <input type="file" id="train" accept=".csv" name="train"
+                        placeholder="enter training data in csv format" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-50">
+                    <label for="test">Enter test data (if available)</label>
+                </div>
+                <div class="col-50" style="padding: 0.8em;">
+                    <input type="file" id="test" accept=".csv" name="test"
+                        placeholder="enter test data in csv format " required>
+                </div>
+            </div>
+
+
+            <div class="row ">
+                <button type="submit" class="but">Clean Data Now</button>
+            </div>
+        </form>
+    </div>
+
+    {% endblock body %}
