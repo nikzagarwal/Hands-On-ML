@@ -187,4 +187,4 @@ def pro():
    return render_template('projects.html',mypro=mypro,mydata=mydata,mymetric=mymetric,mymodel=mymodel)
 
 if __name__ == '__main__':
-   app.run(debug=True )
+   app.run()
