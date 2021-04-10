@@ -1,5 +1,4 @@
-from flask import Flask, render_template , request, url_for ,session, redirect 
-from flask_login import logout_user
+from flask import Flask, render_template , request, url_for ,session
 from preprocess import *
 from makemodel import*
 from werkzeug import secure_filename
