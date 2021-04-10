@@ -1,11 +1,11 @@
 
-def clean(cols,rows,changetype,encodecol,scaling,scalingcol,targetcol,dftest,sno):
+def cleanpy(cols,rows,changetype,encodecol,scaling,scalingcol,targetcol,dftest,cleandatapath,rawdatapath):
     import pandas as pd
     import numpy as np
     from sklearn import preprocessing
     import os
 
-    df=pd.read_csv("static/cardata.csv")
+    df=pd.read_csv(rawdatapath)
     origcol=df.columns
 
     if(cols!=""):
@@ -77,12 +77,11 @@ def clean(cols,rows,changetype,encodecol,scaling,scalingcol,targetcol,dftest,sno
     ytrain=pd.DataFrame(dftrain.iloc[:,targetcol])
     ytest=pd.DataFrame(dftest.iloc[:,targetcol])
     
-    path="static/data/"+sno
-    os.mkdir(path)
-    dftrain.to_csv(path+"/dftrain.csv")
-    dftest.to_csv(path+"/dftest.csv")
-    ytrain.to_csv(path+"/ytrain.csv")
-    ytest.to_csv(path+"/ytest.csv")
+    
+    dftrain.to_csv(cleandatapath+"dftrain.csv",index=None)
+    dftest.to_csv(cleandatapath+"dftest.csv",index=None)
+    ytrain.to_csv(cleandatapath+"ytrain.csv",index=None)
+    ytest.to_csv(cleandatapath+"ytest.csv",index=None)
 
     
     

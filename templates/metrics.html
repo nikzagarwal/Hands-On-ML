@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %} Home{% endblock title %}
+{% block body %}
+<div>
+    <h1>Models Created</h1>
+</div>
+
+<h3>The number of the model goes here : {{x.modelType}}<h3>
+<h3>The name of the model goes here : {{x.modelName}}<h3>
+<h3>The params of the model goes here : {{y.weights}}<h3>
+
+
+
+    <div class="centertable">
+        <table class="styled-table">
+            {% if x.modeltype == "Classification" %}
+            <thead>
+                <tr>
+                    <th>Performance Metrics - Classification</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="active-row">
+                    <td>Accuracy</td>
+                    <td>{{y.accuracy}}</td>
+                </tr>
+                <tr>
+                    <td>F1 Score</td>
+                    <td>{{y.f1score}}</td>
+                </tr>
+                <tr>
+                    <td>Precision</td>
+                    <td>{{y.precision}}</td>
+                </tr>
+                <tr>
+                    <td>Recall</td>
+                    <td>{{y.recall}}</td>
+                </tr>
+            </tbody>
+            {% else %}
+            <thead>
+                <tr>
+                    <th>Performance Metrics - Regression</th>
+                    <th>Points</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                <tr>
+                    <td>RMSE Score</td>
+                    <td>{{y.rmse}}</td>
+                </tr>
+                <tr class="active-row">
+                    <td>R2 Score</td>
+                    <td>{{y.r2}}</td>
+                </tr>
+            </tbody>
+            {% endif %}
+        </table>
+    </div>
+
+                        {% endblock body %}

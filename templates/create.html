@@ -14,12 +14,13 @@
     </div>
 
     <div class="container">
-        <form name="data" action="/clean" method="POST">
+        <form name="data" action="/clean" method="POST" enctype = "multipart/form-data">
             <div class="row">
                 <div class="col-50">
                     <label for="name">Name of your project?</label>
                 </div>
                 <div class="col-50">
+                    
                     <input type="text" id="name" name="name" placeholder="Name your project..." required>
                 </div>
             </div>
@@ -40,7 +41,7 @@
                 </div>
                 <div class="col-50" style="padding: 0.8em;">
                     <input type="file" id="test" accept=".csv" name="test"
-                        placeholder="enter test data in csv format " required>
+                        placeholder="enter test data in csv format " >
                 </div>
             </div>
 

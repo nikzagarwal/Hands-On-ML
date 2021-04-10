@@ -88,9 +88,9 @@
 
 .goalbox p 
 {
-    font-family: 'Merriweather', serif;
+   font-family: 'Merriweather', serif;
     font-size: 22px; 
-    font-weight: 300;
+    font-weight: 300; 
     line-height: 40px;
     margin: 10px 30px ;
     text-align: center;
