@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block title %} Home{% endblock title %}
+{% block body %}
+
+
+<div>
+    <h1
+        style=" text-align: center;font-weight: bolder;text-shadow: #53b4a2 1px 1px;text-transform: uppercase;font-size: 300%; color:rgb(43, 41, 54);">
+        Trained Models 
+    </h1>
+    <br>
+
+    {% if mypro|length == 0 %}
+
+    <div class="alert alert-dark" role="alert">
+      No project found. Create your project now!
+    </div>
+    {% else %}
+    {% for x in mypro %}
+    {% for model in mymodel%}
+    {% for metric in mymetric%}
+    {% if x.common == model.common %}
+    {% if x.common == metric.common %}
+    <section style="border-radius: 5px;background-color: #f2f2f2;width: auto;height:250px;margin: 20px;">
+        <div class="col-50" style="padding: 1em;">
+
+            <p>Name of the Model : {{x.name}}</p>
+            <p>Model type of the Model : {{model.modelType}}</p>
+            <p>Name of the Model : {{model.modelName}}</p>
+
+        </div>
+
+        <div class="col-50">
+            <table class="styled-table">
+                {% set var = model.modelType %}
+                {% if var == "classification" %}
+                <thead>
+                    <tr>
+                        <th>Performance Metrics - Classification</th>
+                        <th>Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="active-row">
+                        <td>Accuracy</td>
+                        <td>{{metric.accuracy}}</td>
+                    </tr>
+                    <tr>
+                        <td>F1 Score</td>
+                        <td>{{metric.f1score}}</td>
+                    </tr>
+                    <tr>
+                        <td>Precision</td>
+                        <td>{{metric.precision}}</td>
+                    </tr>
+                    <tr>
+                        <td>Recall</td>
+                        <td>{{metric.recall}}</td>
+                    </tr>
+                </tbody>
+                {% else %}
+                <thead>
+                    <tr>
+                        <th>Performance Metrics - Regression</th>
+                        <th>Points</th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>RMSE Score</td>
+                        <td>{{metric.rmse}}</td>
+                    </tr>
+                    <tr class="active-row">
+                        <td>R2 Score</td>
+                        <td>{{metric.r2}}</td>
+
+                    </tr>
+                </tbody>
+                {% endif %}
+            </table>
+        </div>
+    </section>
+   {%endif%}
+   {%endif%}
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}
+</div>
+{% endif %}
+
+<style>
+    .centertable {
+        margin-left: 28%;
+        margin-right: 28%;
+    }
+
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 100px;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .styled-table thead tr {
+        background-color: #009879;
+        color: #ffffff;
+        text-align: left;
+    }
+
+    .styled-table th,
+    .styled-table td {
+        padding: 12px 15px;
+    }
+
+    .styled-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+    }
+
+    .styled-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+    }
+
+    .styled-table tbody tr:last-of-type {
+        border-bottom: 2px solid #009879;
+    }
+
+    .styled-table tbody tr.active-row {
+        font-weight: bold;
+        color: #009879;
+    }
+
+    .button {
+        background-color: #4CAF50;
+        /* Green */
+        border: none;
+        color: white;
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+
+    .button1 {
+        background-color: white;
+        color: black;
+        border: 2px solid #4CAF50;
+    }
+
+    p {
+
+        font-family: 'Merriweather', serif;
+        font-size: 22px;
+        font-weight: 300;
+        line-height: 40px;
+        margin: 10px 30px;
+        text-align: center;
+        text-shadow: rgb(43, 41, 54) -1px -1px;
+    }
+</style>
+
+{% endblock body %}

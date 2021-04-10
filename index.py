@@ -1,17 +1,22 @@
-from flask import Flask, render_template , request, url_for ,session
+from flask import Flask, render_template , request, url_for ,session, redirect 
+from flask_login import logout_user
 from preprocess import *
 from makemodel import*
 from werkzeug import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from random import randint
 import os
+import json
+
+with open('templates/config.json','r') as c:
+   params = json.load(c)["params"]
 
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = params['server']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db=SQLAlchemy(app)
-app.secret_key = 'dljsaklqk24e21cjn!Ew@@dsa5'
+app.secret_key = params['key']
 
 
 
@@ -22,6 +27,7 @@ class Project(db.Model):
     name=db.Column(db.String(30),nullable=False)
     rawdata=db.Column(db.String(50))
     cleandata=db.Column(db.String(50))
+    common=db.Column(db.Integer,nullable=False)
 
 class Data(db.Model):
     sno=db.Column(db.Integer,primary_key=True)
@@ -29,6 +35,7 @@ class Data(db.Model):
     ytrain=db.Column(db.String(50),nullable=False)
     dftest=db.Column(db.String(50),nullable=False)
     ytest=db.Column(db.String(50),nullable=False)
+    common=db.Column(db.Integer,nullable=False)
 
 class Modeldb(db.Model):
     sno=db.Column(db.Integer,primary_key=True)
@@ -36,6 +43,7 @@ class Modeldb(db.Model):
     modelName= db.Column(db.String(50))
     weights=db.Column(db.String(50))
     metricsid=db.relationship('Metricdb',backref='metricsid')
+    common=db.Column(db.Integer,nullable=False)
 
 class Metricdb(db.Model):
     sno=db.Column(db.Integer,primary_key=True)
@@ -46,9 +54,17 @@ class Metricdb(db.Model):
     rmse=db.Column(db.String(50))
     r2=db.Column(db.String(50))
     owner_id=db.Column(db.Integer,db.ForeignKey('modeldb.sno'))
-    
+    common=db.Column(db.Integer,nullable=False)
+
+@app.route("/logout")
+def logout():
+    session.pop('user',None)
+    return render_template('login.html')
+      
 @app.route('/')
-def home():       
+def home():  
+   if('user' in session and session['user']==params["u"]):    
+      return render_template('create.html')
    return render_template('login.html')
 
 @app.route('/dashboard',methods=['GET','POST'])
@@ -56,7 +72,7 @@ def dashboard():
    if request.method=='POST':
       username=request.form['user']
       password=request.form['passw']    
-      if (username=="admin" and password=="123"):
+      if (username==params['u'] and password==params['p']):
          session['user']=username
          return render_template('create.html')
       else:
@@ -64,12 +80,9 @@ def dashboard():
    else:
       return render_template('login.html')
 
-
-
-@app.route('/create')
-def create():       
-   return render_template('create.html')
-
+@app.route('/create',methods=['GET','POST'])
+def create():
+      return render_template('create.html')
 
 @app.route('/clean',methods=['GET','POST'])
 def clean():
@@ -87,8 +100,11 @@ def clean():
       train.save(rawdatapath+train.filename)
       rawdatapath+=train.filename
       session['rawdatapath'] = rawdatapath
-      x=Project(name=name, rawdata=rawdatapath,cleandata=cleandatapath)
+      num= randint(0,9999999999)
+      session['num'] = num
+      x=Project(name=name, rawdata=rawdatapath,cleandata=cleandatapath,common=num)
       db.session.add(x)
+
       db.session.commit()
       session['train'] = train.filename
       # urldata=url_for('static', filename='cardata.csv')
@@ -97,6 +113,7 @@ def clean():
 @app.route('/data',methods=['GET','POST'])
 def data():
    if request.method=='POST':
+      num= session.get('num', None)
       cleandatapath= session.get('cleandatapath', None)
       rawdatapath= session.get('rawdatapath', None)
       cols=request.form['colno']
@@ -115,8 +132,8 @@ def data():
       session['dftestpath'] = dftestpath
       session['ytrainpath'] = ytrainpath
       session['ytestpath'] = ytestpath
-      newfile=Data(dftrain=path+"dftrain.csv",ytrain=path+"ytrain.csv",dftest=path+"dftest.csv",ytest=path+"ytest.csv")
       
+      newfile=Data(dftrain=path+"dftrain.csv",ytrain=path+"ytrain.csv",dftest=path+"dftest.csv",ytest=path+"ytest.csv",common=num)
       db.session.add(newfile)
       db.session.commit()
       return render_template('model2.html',newfile=newfile)
@@ -125,21 +142,49 @@ def data():
 def metrics():
    if request.method=="POST":
       modeltype=request.form["mtype"]
-      model=request.form["model"]
-      var_smoothing=request.form["var_smoothing"]
-      n_neighbors=request.form['n_neighbors']
+      if(modeltype=="classification"):
+         model=request.form["model1"]
+      else:
+         model=request.form["model2"]
+      alpha=request.form["alpha"]
+      if type(alpha)!=float:
+         alpha=1
+      n_neighbors=(request.form['n_neighbors'])
+      if type(n_neighbors)!=int:
+         n_neighbors=5
       leaf_size=request.form['leaf_size']
-      max_depth=request.form['max_depth']
+      if type(leaf_size)!=int:
+         leaf_size=30
+      max_depth=(request.form['max_depth'])
+      if type(max_depth)!=int:
+         max_depth=50
       min_samples_split=request.form['min_samples_split']
-      n_estimators=request.form['n_estimators']
+      if type(min_samples_split)!=int:
+         min_samples_split=2
+      n_estimators=(request.form['n_estimators'])
+      if type(n_estimators)!=int:
+         n_estimators=500
       random_state=request.form['random_state']
+      if type(random_state)!=int:
+         random_state=42
       max_leaf_nodes=request.form['max_leaf_nodes']
+      if type(max_leaf_nodes)!=int:
+         max_leaf_nodes=50
 
       dftrainpath= session.get('dftrainpath', None)
       ytrainpath= session.get('ytrainpath', None)
-         
-      x,y=output(modeltype,model,var_smoothing,n_neighbors,leaf_size,max_depth,min_samples_split,n_estimators,random_state,max_leaf_nodes,dftrainpath,ytrainpath,db)
+      dftestpath= session.get('dftestpath', None)
+      ytestpath= session.get('ytestpath', None)
+      num= session.get('num', None)
+      x,y=output(modeltype,model,dftrainpath,ytrainpath,dftestpath,ytestpath,db,num,float(alpha),int(n_neighbors),int(leaf_size),int(max_depth),int(min_samples_split),int(n_estimators),int(random_state),int(max_leaf_nodes))
       return render_template('metrics.html',x=x,y=y)
+@app.route('/projects')
+def pro():
+   mypro=Project.query.all()
+   mydata=Data.query.all()
+   mymetric=Metricdb.query.all()
+   mymodel=Modeldb.query.all()
+   return render_template('projects.html',mypro=mypro,mydata=mydata,mymetric=mymetric,mymodel=mymodel)
 
 if __name__ == '__main__':
    app.run(debug=True )

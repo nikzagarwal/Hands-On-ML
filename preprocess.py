@@ -34,10 +34,10 @@ def cleanpy(cols,rows,changetype,encodecol,scaling,scalingcol,targetcol,dftest,c
             df.iloc[:,scalingcol]= x_scaled
 
     #encoding
+    le = preprocessing.LabelEncoder()
     if(encodecol!=""):
         if changetype=="labelencode":
             featurex=df.iloc[:,encodecol]
-            le = preprocessing.LabelEncoder()
             featurex=featurex.apply(le.fit_transform)
             features=featurex.columns
             for feature in features:
@@ -47,6 +47,13 @@ def cleanpy(cols,rows,changetype,encodecol,scaling,scalingcol,targetcol,dftest,c
             dummy=pd.get_dummies(df.iloc[:,encodecol])
             df=pd.concat([df,dummy],axis=1)
             df.drop(origcol[encodecol],axis=1,inplace=True)
+    if df[df.iloc[:,targetcol].columns[0]].dtype==object:
+        featurex=df.iloc[:,targetcol]
+        featurex=featurex.apply(le.fit_transform)
+        features=featurex.columns
+        for feature in features:
+             df.drop([feature],axis=1,inplace=True)
+             df=pd.concat([df,featurex[feature]],axis=1) 
 
     # drop columns
     if(cols!=""):
@@ -74,8 +81,10 @@ def cleanpy(cols,rows,changetype,encodecol,scaling,scalingcol,targetcol,dftest,c
     else:
         dftrain=df
     #target variable seperation
-    ytrain=pd.DataFrame(dftrain.iloc[:,targetcol])
-    ytest=pd.DataFrame(dftest.iloc[:,targetcol])
+    ytrain=pd.DataFrame(dftrain[origcol[targetcol][0]])
+    ytest=pd.DataFrame(dftest[origcol[targetcol][0]])
+    dftrain.drop([origcol[targetcol][0]],axis=1,inplace=True)
+    dftest.drop([origcol[targetcol][0]],axis=1,inplace=True)
     
     
     dftrain.to_csv(cleandatapath+"dftrain.csv",index=None)

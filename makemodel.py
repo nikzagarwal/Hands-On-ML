@@ -11,19 +11,21 @@ from random import randint
 import os
 
 
-def output(modeltype,model1,var_smoothing1,n_neighbors1,leaf_size1,max_depth1,min_samples_split1,n_estimators1,random_state1,max_leaf_nodes1,dftrainpath,ytrainpath,db):
+def output(modeltype,model1,dftrainpath,ytrainpath,dftestpath,ytestpath,db,num,alpha1=1,n_neighbors1=5,leaf_size1=30,max_depth1=50,min_samples_split1=2,n_estimators1=500,random_state1=42,max_leaf_nodes1=50):
     
     
     
     model=model1 
     X_train=pd.read_csv(dftrainpath)
     Y_train=pd.read_csv(ytrainpath)
-    def naives(var_smoothing=1e-9):
-        from sklearn.naive_bayes import GaussianNB
+    X_test=pd.read_csv(dftestpath)
+    Y_test=pd.read_csv(ytestpath)
 
+    def naives(alpha=1.0):
+        from sklearn.naive_bayes import MultinomialNB
 
-        clf=GaussianNB()
-        clf.fit(X_train,Y_train)
+        clf=MultinomialNB(alpha=alpha1)
+        clf.fit(X_train,Y_train.values.ravel())
 
         return clf
 
@@ -109,49 +111,49 @@ def output(modeltype,model1,var_smoothing1,n_neighbors1,leaf_size1,max_depth1,mi
     weightspath="static/weights/"+str(randint(0,9999999999))
     os.mkdir(weightspath)
 
-    if model == 'naivebayes':
+    if model == 'Naive Bayes':
         
-        clf=naives(var_smoothing=var_smoothing1)
+        clf=naives(alpha=alpha1)
         pickle.dump(clf,open(weightspath+'/model.pkl','wb'))
         #modelf=pickle.load(open('model.pkl','rb'))
         
-    elif model=='decisiontrees':
+    elif model=='Decision Trees':
         
         clf=decisiontrees(max_depth=max_depth1,min_samples_split=min_samples_split1)
         pickle.dump(clf,open(weightspath+'/model.pkl','wb'))
         #modelf=pickle.load(open('model.pkl','rb'))
         
-    elif model=='knn':
+    elif model=='Knn':
         
         clf=knn(n_neighbors=n_neighbors1,leaf_size=leaf_size1)
         pickle.dump(clf,open(weightspath+'/model.pkl','wb'))
         #modelf=pickle.load(open('model.pkl','rb')) 
         
-    elif model=='randomforest':
+    elif model=='Random Forest':
         
         clf=randomforest(n_estimators=400 ,max_leaf_nodes=max_leaf_nodes1,min_samples_split=min_samples_split1) #as of now no parameters are passed
         pickle.dump(clf,open(weightspath+'/model.pkl','wb'))
         #modelf=pickle.load(open('model.pkl','rb'))
         
-    elif model == 'linearreg':
+    elif model == 'Linear Regression':
         
         clf=linearreg()
         pickle.dump(clf,open(weightspath+'/model.pkl','wb'))
         #modelf=pickle.load(open('model.pkl','rb'))
         
-    elif model=='decisiontreereg':
+    elif model=='Decision Tree Regression':
         
         clf=decisiontreereg(max_depth=max_depth1,random_state=random_state1,min_samples_split=min_samples_split1)
         pickle.dump(clf,open(weightspath+'/model.pkl','wb'))
         #modelf=pickle.load(open('model.pkl','rb'))
         
-    elif model=='knnreg':
+    elif model=='Knn Regression':
         
         clf=knnreg(n_neighbors=n_neighbors1,leaf_size=leaf_size1)
         pickle.dump(clf,open(weightspath+'/model.pkl','wb'))
         #modelf=pickle.load(open('model.pkl','rb')) 
         
-    elif model=='randomforestreg':
+    elif model=='Random Forest Regression':
         
         clf=randomforestreg(n_estimators=n_neighbors1, max_leaf_nodes=max_leaf_nodes1) #as of now no parameters are passed
         pickle.dump(clf,open(weightspath+'/model.pkl','wb'))
@@ -164,22 +166,22 @@ def output(modeltype,model1,var_smoothing1,n_neighbors1,leaf_size1,max_depth1,mi
     model_rmse=0
     model_r2score=0
     if modeltype=="classification":
-        y_pred=clf.predict(X_train)
-        model_accuracy=metrics.accuracy_score(Y_train,y_pred.round())
-        model_f1_score=metrics.f1_score(Y_train,y_pred.round())
-        model_precision=metrics.precision_score(Y_train,y_pred.round())
-        model_recall=metrics.recall_score(Y_train,y_pred.round())
+        y_pred=clf.predict(X_test)
+        model_accuracy=metrics.accuracy_score(Y_test,y_pred)
+        model_f1_score=metrics.f1_score(Y_test,y_pred,average='micro')
+        model_precision=metrics.precision_score(Y_test,y_pred,average='micro')
+        model_recall=metrics.recall_score(Y_test,y_pred,average='micro')
     elif modeltype=="regression":
-        y_pred=clf.predict(X_train)
-        model_rmse=metrics.mean_squared_error(Y_train,y_pred)
-        model_r2score=metrics.r2_score(Y_train,y_pred)
+        y_pred=clf.predict(X_test)
+        model_rmse=metrics.mean_squared_error(Y_test,y_pred)
+        model_r2score=metrics.r2_score(Y_test,y_pred)
 
 
-    x=Modeldb(modelType=modeltype,modelName=model, weights=weightspath+"/")
+    x=Modeldb(modelType=modeltype,modelName=model, weights=weightspath+"/",common=num)
     db.session.add(x)
     db.session.commit()
     
-    y=Metricdb(accuracy=model_accuracy,f1score=model_f1_score,precision=model_precision,recall=model_recall,rmse=model_rmse,r2=model_r2score,metricsid=x)
+    y=Metricdb(accuracy=model_accuracy,f1score=model_f1_score,precision=model_precision,recall=model_recall,rmse=model_rmse,r2=model_r2score,metricsid=x,common=num)
     db.session.add(y)
     db.session.commit()
     

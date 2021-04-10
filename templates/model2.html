@@ -38,47 +38,138 @@
 
 
             <form action="/metrics", method = 'POST'>
-                <select name="mtype"> Model Type
-                    <option value='classification'>Classification</option>
-                    <option value='regression'>Regression</option>
-                </select>
+                <div class="row">
+                    <div class="col-50" style="font-size: large;">
+                        <label for="type">Which type of data is it?</label>
+                    </div>
+                    <div class="col-50" style="font-size:large;">
+                        <select name="mtype" id="modeltype" onchange="myFunction(this)">
+                            <option value="classification">Classification</option>
+                            <option value="regression">Regression</option>
+                        </select>
+
+                    </div>
+                </div>
+                <div class="row" id="classimodel">
+                    <div class="col-50" style="font-size: large;">
+                        <label for="type">Which model you want?</label>
+                    </div>
+                    <div class="col-50" style="font-size:large">
+                        <div>
+                            <select name="model1" onchange="myFunction2(this)">
+                                <option value='Naive Bayes'>Naive Bayes</option>
+                                <!-- var_smoothing=1e-9 -->
+                                <option value='Knn'>K-Nearest Neighbor</option>
+                                <!-- n_neighbors = 5 ,leaf_size = 30 -->
+                                <option value='Decision Trees'>Decision Trees</option>
+                                <!-- max_depth=None,min_samples_split=2 -->
+                                <option value='Random Forest'>Random Forest</option>
+                                <!-- n_estimators=500,max_leaf_nodes=None,min_samples_split=2 -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="regmodel">
+                    <div class="col-50" style="font-size: large;">
+                        <label for="type">Which type of data is it?</label>
+                    </div>
+                    <div class="col-50" style="font-size:large">
+                        <div>
+                            <select name="model2" onchange="myFunction3(this)">
+                                <option value='Linear Regression'>Linear Regression</option>
+
+                                <option value='Decision Tree Regression'>Decision Tree Regression</option>
+                                <!-- max_depth=None,random_state=42,min_samples_split=2 -->
+                                <option value='Random Forest Regression'>Random Forest Regression</option>
+                                <!-- n_estimators=500,max_leaf_nodes=None -->
+                                <option value='Knn Regression'>K-Nearest Neighborn Regression</option>
+                                <!-- n_neighbors = 5 ,leaf_size = 30 -->
+                            </select>
+                        </div>
+                    </div>
+                </div>  
                 <br>
-                <select name="model"> model
-                    <option value='naivebayes'>naivebayes</option>
-                    <!-- var_smoothing=1e-9 -->
-                    <option value='knn'>Knn</option>
-                    <!-- n_neighbors = 5 ,leaf_size = 30 -->
-                    <option value='decisiontrees'>decisiontrees</option>
-                    <!-- max_depth=None,min_samples_split=2 -->
-                    <option value='randomforest'>randomforest</option>
-                    <!-- n_estimators=500,max_leaf_nodes=None,min_samples_split=2 -->
-                    <option value='linearreg'>linearreg</option>
-        
-                    <option value='decisiontreereg'>decisiontreereg</option>
-                    <!-- max_depth=None,random_state=42,min_samples_split=2 -->
-                    <option value='randomforestreg'>randomforestreg</option>  
-                    <!-- n_estimators=500,max_leaf_nodes=None -->
-                    <option value='knnreg'>knnreg</option>
-                    <!-- n_neighbors = 5 ,leaf_size = 30 -->
-                </select>
+
                 <br>
-                <label for="var_smoothing">var_smoothing</label><br>
-                <input name="var_smoothing" type="number" maxlength="150" placeholder="enter a number" value={{request.form.var_smoothing}}><br>
-                <label for="n_neighbors">n_neighbors</label><br>
-                <input name="n_neighbors" type="number"  placeholder="enter a number " value={{request.form.n_neighbours}}><br>
-                <label for="max_leaf_nodes">max_leaf_nodes</label><br>
-                <input name="max_leaf_nodes" type="number"  placeholder="enter a number " value={{request.form.max_leaf_nodes}}><br>
-                <label for="leaf_size">leaf_size</label><br>
-                <input name="leaf_size" type="number" placeholder="enter a number " value={{request.form.leaf_size}}><br>
-                <label for="max_depth">max_depth</label><br>
-                <input name="max_depth" type="number" placeholder="enter a number by default None" value={{request.form.max_depth}}><br>
-                <label for="min_samples_split">min_samples_split</label><br> 
-                <input name="min_samples_split" type="number" placeholder="enter a number by default 2" value={{request.form.min_sample_split}}><br>
-                <label for="n_estimators">n_estimators</label><br>
-                <input name="n_estimators" type="number" placeholder="enter a number by default 100" value ={{request.form.n_estimators}}><br>
-                <label for="random_state">random state</label><br>
-                <input name="random_state" type="number" placeholder="enter a number by default 42" value ={{request.form.random_state}}> <br>
-                <input type="submit" > 
+                    <h2 style="font-weight: bold;">Parameters</h2>
+                    <br>
+
+                    <div class="row" id="n">
+                        <div class="col-50">
+                            <label for="alpha">alpha</label>
+                        </div>
+                        <div class="col-50">
+                            <input id="alpha" name="alpha" type="number" maxlength="150"
+                                placeholder="enter a number">
+                        </div>
+                    </div>
+
+                    <div class="row" id="k">
+                        <div class="col-50">
+                            <label for="n_neighbors">n_neighbors</label>
+                        </div>
+                        <div class="col-50">
+                            <input id="n_neighbors" name="n_neighbors" type="number" placeholder="enter a number ">
+                        </div>
+                    </div>
+
+                    <div class="row" id="k">
+                        <div class="col-50">
+                            <label for="leaf_size">leaf_size</label>
+                        </div>
+                        <div class="col-50">
+                            <input id="leaf_size" name="leaf_size" type="number" placeholder="enter a number ">
+                        </div>
+                    </div>
+
+                    <div class="row" id="d">
+                        <div class="col-50">
+                            <label for="max_depth">max_depth</label>
+                        </div>
+                        <div class="col-50">
+                            <input id="max_depth" name="max_depth" type="number"
+                                placeholder="enter a number by default None">
+                        </div>
+                    </div>
+
+                    <div class="row" id="dr">
+                        <div class="col-50">
+                            <label for="min_samples_split">min_samples_split</label>
+                        </div>
+                        <div class="col-50">
+                            <input id="min_samples_split" name="min_samples_split" type="number"
+                                placeholder="enter a number (default is 2)">
+                        </div>
+                    </div>
+
+                    <div class="row" id="r">
+                        <div class="col-50">
+                            <label for="n_estimators">n_estimators</label>
+                        </div>
+                        <div class="col-50">
+                            <input id="n_estimators" name="n_estimators" type="number"
+                                placeholder="enter a number by (default is 100)">
+                        </div>
+                    </div>
+                    <div class="row" id="r">
+                        <div class="col-50">
+                            <label for="random_state">random_state</label>
+                        </div>
+                        <div class="col-50">
+                            <input id="random_state" name="random_state" type="number"
+                                placeholder="enter a number (default is 42)">
+                        </div>
+                    </div>
+                    <div class="row" id="r">
+                        <div class="col-50">
+                            <label for="max_leaf_nodes">max_leaf_nodes</label>
+                        </div>
+                        <div class="col-50">
+                            <input id="max_leaf_nodes" name="max_leaf_nodes" type="number"
+                                placeholder="enter a number (default is None)">
+                        </div>
+                    </div>
+                    <input class="but" type="submit" > 
             </form>
         </div>
        
