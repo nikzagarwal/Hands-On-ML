@@ -1,6 +1,4 @@
 from flask import Flask, render_template , request, url_for ,session
-from preprocess import *
-from makemodel import*
 from werkzeug import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from random import randint
@@ -108,7 +106,10 @@ def clean():
       session['train'] = train.filename
       # urldata=url_for('static', filename='cardata.csv')
       return render_template('data.html',urldata=rawdatapath,x=x)
-     
+
+from preprocess import *
+from makemodel import*
+
 @app.route('/data',methods=['GET','POST'])
 def data():
    if request.method=='POST':
