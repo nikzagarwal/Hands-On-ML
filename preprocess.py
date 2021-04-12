@@ -21,7 +21,7 @@ def cleanpy(cols,changetype,encodecol,scaling,scalingcol,targetcol,dftest,cleand
 
     #feature scaling
     if(scalingcol!=""):
-        if scaling=='s':
+        if scaling=='standarization':
             for feature in scalingcol:
                 df.iloc[:,feature] = (df.iloc[:,feature] - df.iloc[:,feature].mean()) / (df.iloc[:,feature].std())
         else:

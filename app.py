@@ -96,7 +96,7 @@ def dashboard():
 @app.route('/create',methods=['GET','POST'])
 def create():
       return render_template('create.html')
-
+from getoption import*
 @app.route('/clean',methods=['GET','POST'])
 def clean():
     if request.method=='POST':
@@ -120,10 +120,14 @@ def clean():
       db.session.add(x)
       db.session.commit()
       session['train'] = train.filename
-      return render_template('data.html',urldata=rawdatapath,x=x)
+      option=getoptionpy(rawdatapath)
+      print(option)
+      return render_template('data2.html',urldata=rawdatapath,x=x,option=option)
 
-from preprocess import *
+from preprocess import*
+from preprocess2 import*
 from makemodel import*
+
 
 @app.route('/data',methods=['GET','POST'])
 def data():
@@ -131,13 +135,13 @@ def data():
       num= session.get('num', None)
       cleandatapath= session.get('cleandatapath', None)
       rawdatapath= session.get('rawdatapath', None)
-      cols=request.form['colno']
+      cols=request.form.getlist('colno')
       changetype=request.form['encodetype']
-      encodecol=request.form['encode']
+      encodecol=request.form.getlist('encode')
       scaling=request.form['scaletype']
-      scalingcol=request.form['scale']
+      scalingcol=request.form.getlist('scale')
       targetcol=request.form['target']
-      cleanpy(cols=cols,changetype=changetype,encodecol=encodecol,scaling=scaling,scalingcol=scalingcol,targetcol=targetcol,dftest="",cleandatapath=cleandatapath,rawdatapath=rawdatapath)
+      cleanpy2(cols=cols,changetype=changetype,encodecol=encodecol,scaling=scaling,scalingcol=scalingcol,targetcol=targetcol,dftest="",cleandatapath=cleandatapath,rawdatapath=rawdatapath)
       path=cleandatapath
       dftrainpath=path+"dftrain.csv"
       dftestpath=path+"dftest.csv"
@@ -213,4 +217,4 @@ def pro():
    return render_template('projects.html',mypro=mypro,mydata=mydata,mymetric=mymetric,mymodel=mymodel,sno=sno)
 
 if __name__ == '__main__':
-   app.run()
+   app.run(debug=True)
