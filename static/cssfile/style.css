@@ -11,10 +11,26 @@
     background-color: rgb(43, 41, 54);
     overflow: hidden;
     height: 0.2%;
-    padding: 2% 18% 2% 20%;
+    padding: auto;
     font-weight: bold;
   }
+  .topnav h2{
+    float: left;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: antiquewhite;
+    
+  }
 /*for links inside header*/  
+.menu
+{
+  padding-top: 1.5%;
+}
+.menu a{
+  margin-right: 10px;
+  margin-left: 10px;
+    background-color: rgb(74, 63, 104);
+    border-radius: 10px;
+}
 .topnav a
 {
     
@@ -23,9 +39,9 @@
     display: block;
     color: #f2f2f2;
     text-align: center;
-    padding: 14px 16px;
-    padding-right: 5%;
-    padding-left: 5%;
+    padding: 10px 10px;
+    padding-right: 2%;
+    padding-left: 2%;
     text-decoration: none;
     font-size: 17px;
   }

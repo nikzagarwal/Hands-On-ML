@@ -131,7 +131,7 @@ def output(modeltype,model1,dftrainpath,ytrainpath,dftestpath,ytestpath,db,num,a
         
     elif model=='Random Forest':
         
-        clf=randomforest(n_estimators=400 ,max_leaf_nodes=max_leaf_nodes1,min_samples_split=min_samples_split1) #as of now no parameters are passed
+        clf=randomforest(n_estimators=400 ,max_leaf_nodes=max_leaf_nodes1,min_samples_split=min_samples_split1)
         pickle.dump(clf,open(weightspath+'/model.pkl','wb'))
         #modelf=pickle.load(open('model.pkl','rb'))
         
@@ -176,14 +176,25 @@ def output(modeltype,model1,dftrainpath,ytrainpath,dftestpath,ytestpath,db,num,a
         model_rmse=metrics.mean_squared_error(Y_test,y_pred)
         model_r2score=metrics.r2_score(Y_test,y_pred)
 
+    c=0;sno=0;
+    check=Modeldb.query.all()
 
-    x=Modeldb(modelType=modeltype,modelName=model, weights=weightspath+"/",common=num)
-    db.session.add(x)
-    db.session.commit()
+    for i in check:
+        if i.common==num:
+            c+=1
+            sno=i.sno
+            x=Modeldb.query.get(sno)
+            y=Metricdb.query.get(sno)
+            return x,y
+        
+    if(c==0):
+        x=Modeldb(modelType=modeltype,modelName=model, weights=weightspath+"/",common=num)
+        db.session.add(x)
+        db.session.commit()
+        
+        y=Metricdb(accuracy=model_accuracy,f1score=model_f1_score,precision=model_precision,recall=model_recall,rmse=model_rmse,r2=model_r2score,metricsid=x,common=num)
+        db.session.add(y)
+        db.session.commit()
+        return x,y
     
-    y=Metricdb(accuracy=model_accuracy,f1score=model_f1_score,precision=model_precision,recall=model_recall,rmse=model_rmse,r2=model_r2score,metricsid=x,common=num)
-    db.session.add(y)
-    db.session.commit()
     
-    
-    return x,y

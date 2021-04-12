@@ -4,13 +4,26 @@
 <div>
 
 </div>
-<div class="goalbox">
+<div class="goalbox text-center">
     <h1>Models Created</h1>
-    <p>Type of the Model : {{x.modelType}}
-    <p>
-    <p>Name of the Model : {{x.modelName}}
-    <p>
-        <!-- <p>The params of the model goes here : {{y.weights}}<p> -->
+    <p>Type of the Model : {{x.modelType}}</p>
+    <p>Name of the Model : {{x.modelName}}</p>
+    <div class="row">
+        <div class="col-50">
+            <a href="{{x.weights}}model.pkl" download>
+                <button alt="download weights" class="but" style="float: none;">Download Weights</button>
+            </a>
+        </div>
+        {%for data in mydata%}
+        {%if data.common == x.common%}
+        <div class="col-50">
+            <a href="{{data.dftrain}}" download>
+                <button alt="download clean data" class="but" style="float: none;">Download Clean Data</button>
+            </a>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
 </div>
 
 
@@ -51,7 +64,7 @@
 
         </thead>
         <tbody>
-            <tr >
+            <tr>
                 <td>RMSE Score</td>
                 <td>{{y.rmse}}</td>
             </tr>
@@ -66,10 +79,11 @@
 </div>
 
 <style>
-    .centertable{
+    .centertable {
         margin-left: 28%;
         margin-right: 28%;
     }
+
     .styled-table {
         border-collapse: collapse;
         margin: 25px 100px;

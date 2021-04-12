@@ -1,5 +1,5 @@
 
-def cleanpy(cols,rows,changetype,encodecol,scaling,scalingcol,targetcol,dftest,cleandatapath,rawdatapath):
+def cleanpy(cols,changetype,encodecol,scaling,scalingcol,targetcol,dftest,cleandatapath,rawdatapath):
     import pandas as pd
     import numpy as np
     from sklearn import preprocessing
@@ -11,9 +11,6 @@ def cleanpy(cols,rows,changetype,encodecol,scaling,scalingcol,targetcol,dftest,c
     if(cols!=""):
         cols=cols.split(",")
         cols = list(map(int, cols))
-    if(rows!=""):
-        rows=rows.split(",")
-        rows = list(map(int, rows))
     if(encodecol!=""):
         encodecol=encodecol.split(",")
         encodecol = list(map(int, encodecol))
@@ -59,9 +56,6 @@ def cleanpy(cols,rows,changetype,encodecol,scaling,scalingcol,targetcol,dftest,c
     if(cols!=""):
         df=df.drop(origcol[cols], axis = 1)
 
-    # drop rows
-    if(cols!=""):
-        df=df.drop(rows)
 
     #  mandatory cleaning
 

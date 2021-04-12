@@ -1,5 +1,5 @@
 from flask import Flask, render_template , request, url_for ,session
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from random import randint
 import os
@@ -13,10 +13,7 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = params['server']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db=SQLAlchemy(app)
-app.secret_key = params['key']
-
-
-
+app.secret_key = params['key']      
 
 
 class Project(db.Model):
@@ -122,7 +119,7 @@ def data():
       scaling=request.form['scaletype']
       scalingcol=request.form['scale']
       targetcol=request.form['target']
-      cleanpy(cols=cols,rows="",changetype=changetype,encodecol=encodecol,scaling=scaling,scalingcol=scalingcol,targetcol=targetcol,dftest="",cleandatapath=cleandatapath,rawdatapath=rawdatapath)
+      cleanpy(cols=cols,changetype=changetype,encodecol=encodecol,scaling=scaling,scalingcol=scalingcol,targetcol=targetcol,dftest="",cleandatapath=cleandatapath,rawdatapath=rawdatapath)
       path=cleandatapath
       dftrainpath=path+"dftrain.csv"
       dftestpath=path+"dftest.csv"
@@ -132,11 +129,20 @@ def data():
       session['dftestpath'] = dftestpath
       session['ytrainpath'] = ytrainpath
       session['ytestpath'] = ytestpath
-      
-      newfile=Data(dftrain=path+"dftrain.csv",ytrain=path+"ytrain.csv",dftest=path+"dftest.csv",ytest=path+"ytest.csv",common=num)
-      db.session.add(newfile)
-      db.session.commit()
-      return render_template('model2.html',newfile=newfile)
+      c=0
+      sno=0
+      alldata=Data.query.all()
+      for i in alldata:
+            if i.common==num:
+               c+=1
+               sno=i.sno
+               x=Data.query.get(sno)
+               return render_template('model2.html',newfile=x)
+      if(c==0):      
+         newfile=Data(dftrain=path+"dftrain.csv",ytrain=path+"ytrain.csv",dftest=path+"dftest.csv",ytest=path+"ytest.csv",common=num)
+         db.session.add(newfile)
+         db.session.commit()
+         return render_template('model2.html',newfile=newfile)
 
 @app.route('/metrics',methods=['GET','POST'])
 def metrics():
@@ -177,7 +183,8 @@ def metrics():
       ytestpath= session.get('ytestpath', None)
       num= session.get('num', None)
       x,y=output(modeltype,model,dftrainpath,ytrainpath,dftestpath,ytestpath,db,num,float(alpha),int(n_neighbors),int(leaf_size),int(max_depth),int(min_samples_split),int(n_estimators),int(random_state),int(max_leaf_nodes))
-      return render_template('metrics.html',x=x,y=y)
+      mydata=Data.query.all()
+      return render_template('metrics.html',x=x,y=y,mydata=mydata)
 @app.route('/projects')
 def pro():
    mypro=Project.query.all()
@@ -187,4 +194,4 @@ def pro():
    return render_template('projects.html',mypro=mypro,mydata=mydata,mymetric=mymetric,mymodel=mymodel)
 
 if __name__ == '__main__':
-   app.run()
+   app.run(debug=True)
