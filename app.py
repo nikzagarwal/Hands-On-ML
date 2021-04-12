@@ -15,6 +15,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db=SQLAlchemy(app)
 app.secret_key = params['key']      
 
+class Login(db.Model):
+    sno=db.Column(db.Integer,primary_key=True)
+    name=db.Column(db.String(50),nullable=False)
+    user=db.Column(db.String(50),nullable=False)
+    password=db.Column(db.String(50),nullable=False)
 
 class Project(db.Model):
     sno=db.Column(db.Integer,primary_key=True)
@@ -22,6 +27,7 @@ class Project(db.Model):
     rawdata=db.Column(db.String(50))
     cleandata=db.Column(db.String(50))
     common=db.Column(db.Integer,nullable=False)
+    user=db.Column(db.Integer,nullable=False)
 
 class Data(db.Model):
     sno=db.Column(db.Integer,primary_key=True)
@@ -54,25 +60,38 @@ class Metricdb(db.Model):
 def logout():
     session.pop('user',None)
     return render_template('login.html')
-      
+
+@app.route("/newuser",methods=['GET','POST'])
+def new():
+   if request.method=='POST':
+      name=request.form['name']
+      username=request.form['user']
+      password=request.form['passw']
+      x=Login(name=name,user=username,password=password)
+      db.session.add(x)
+      db.session.commit()
+      return render_template('Login.html')
+   return render_template('newuser.html')
+
 @app.route('/')
 def home():  
-   if('user' in session and session['user']==params["u"]):    
-      return render_template('create.html')
+   if('user' in session):    
+         return render_template('index.html')
    return render_template('login.html')
+
 
 @app.route('/dashboard',methods=['GET','POST'])
 def dashboard():   
    if request.method=='POST':
       username=request.form['user']
-      password=request.form['passw']    
-      if (username==params['u'] and password==params['p']):
-         session['user']=username
-         return render_template('create.html')
-      else:
-         return render_template('login.html')
-   else:
-      return render_template('login.html')
+      password=request.form['passw']
+      allusers=Login.query.all()
+      for i in allusers:
+         if i.user==username and i.password == password:
+            session['user']=username
+            session['sno']=i.sno
+            return render_template('index.html')
+      return render_template('login.html')      
 
 @app.route('/create',methods=['GET','POST'])
 def create():
@@ -96,12 +115,11 @@ def clean():
       session['rawdatapath'] = rawdatapath
       num= randint(0,9999999999)
       session['num'] = num
-      x=Project(name=name, rawdata=rawdatapath,cleandata=cleandatapath,common=num)
+      sno= session.get('sno', None)
+      x=Project(name=name, rawdata=rawdatapath,cleandata=cleandatapath,common=num,user=sno)
       db.session.add(x)
-
       db.session.commit()
       session['train'] = train.filename
-      # urldata=url_for('static', filename='cardata.csv')
       return render_template('data.html',urldata=rawdatapath,x=x)
 
 from preprocess import *
@@ -191,7 +209,8 @@ def pro():
    mydata=Data.query.all()
    mymetric=Metricdb.query.all()
    mymodel=Modeldb.query.all()
-   return render_template('projects.html',mypro=mypro,mydata=mydata,mymetric=mymetric,mymodel=mymodel)
+   sno= session.get('sno', None)
+   return render_template('projects.html',mypro=mypro,mydata=mydata,mymetric=mymetric,mymodel=mymodel,sno=sno)
 
 if __name__ == '__main__':
-   app.run(debug=True)
+   app.run()

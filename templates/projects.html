@@ -16,14 +16,16 @@
       No project found. Create your project now!
     </div>
     {% else %}
+    
     {% for x in mypro %}
+    {% if x.user==sno %}
     {% for model in mymodel%}
     {% for metric in mymetric%}
     {% if x.common == model.common %}
     {% if x.common == metric.common %}
     <div style="border-radius: 5px;background-color: #f2f2f2;width: auto;height:350px;margin: 20px;">
         <div class="col-50" style="padding: 1em;">
-            <p>Project No. : {{x.sno}}</p>
+            
             <p>Name of the Model : {{x.name}}</p>
             <p>Model type of the Model : {{model.modelType}}</p>
             <p>Name of the Model : {{model.modelName}}</p>
@@ -104,6 +106,7 @@
    {%endif%}
     {% endfor %}
     {% endfor %}
+    {% endif %}
     {% endfor %}
 </div>
 {% endif %}

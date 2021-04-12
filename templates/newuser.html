@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Hands On ML</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='cssfile/logins1.css') }}">
+</head>
+
+<body style="background-color: rgba(0, 0, 0, 0.822);">
+    <div>
+        <div
+            style="border-radius: 5px;color: aliceblue;text-align: center; background-color: #242424;padding:5px 5px 5px 5px; margin: 5px;">
+            <h1 style="font-family: 'Helvetica Neue', sans-serif;
+      text-shadow: #53b4a2 1px 1px;
+      text-transform: uppercase;">Welcome to Hands on Ml</h1>
+            <p style="font-family: 'Merriweather', serif;
+      font-size: 22px; 
+      font-weight: 300; 
+      line-height: 40px;
+      margin: 10px 30px ;
+      text-align: center;
+      text-shadow: rgb(43, 41, 54) -1px -1px;">" Create Your new Account now and you can create your own ML models
+                without coding single line"
+            </p>
+            <br>
+        </div>
+        <br>
+        <br>
+        <form name="data" action="/newuser" method="POST">
+            <div class="login-box">
+                <h1>Create Account</h1>
+                <div class="textbox">
+                    <i class="fas fa-name"></i>
+                    <input type="text" id="name" name="name" placeholder="Enter Your Name" required>
+                </div>
+                <div class="textbox">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="user" name="user" placeholder="Username" required>
+                </div>
+
+                <div class="textbox">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="passw" name="passw" placeholder="Password" required>
+                </div>
+
+                <input type="submit" name="sign" class="btn" value="Create Account">
+                </div>
+            </div>
+        </form>
+       
+</body>
+
+</html>
