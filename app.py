@@ -122,10 +122,9 @@ def clean():
       session['train'] = train.filename
       option=getoptionpy(rawdatapath)
       print(option)
-      return render_template('data2.html',urldata=rawdatapath,x=x,option=option)
+      return render_template('data.html',urldata=rawdatapath,x=x,option=option)
 
 from preprocess import*
-from preprocess2 import*
 from makemodel import*
 
 
@@ -141,7 +140,7 @@ def data():
       scaling=request.form['scaletype']
       scalingcol=request.form.getlist('scale')
       targetcol=request.form['target']
-      cleanpy2(cols=cols,changetype=changetype,encodecol=encodecol,scaling=scaling,scalingcol=scalingcol,targetcol=targetcol,dftest="",cleandatapath=cleandatapath,rawdatapath=rawdatapath)
+      cleanpy(cols=cols,changetype=changetype,encodecol=encodecol,scaling=scaling,scalingcol=scalingcol,targetcol=targetcol,dftest="",cleandatapath=cleandatapath,rawdatapath=rawdatapath)
       path=cleandatapath
       dftrainpath=path+"dftrain.csv"
       dftestpath=path+"dftest.csv"
@@ -159,12 +158,12 @@ def data():
                c+=1
                sno=i.sno
                x=Data.query.get(sno)
-               return render_template('model2.html',newfile=x)
+               return render_template('model.html',newfile=x)
       if(c==0):      
          newfile=Data(dftrain=path+"dftrain.csv",ytrain=path+"ytrain.csv",dftest=path+"dftest.csv",ytest=path+"ytest.csv",common=num)
          db.session.add(newfile)
          db.session.commit()
-         return render_template('model2.html',newfile=newfile)
+         return render_template('model.html',newfile=newfile)
 
 @app.route('/metrics',methods=['GET','POST'])
 def metrics():

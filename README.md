@@ -1,5 +1,11 @@
 # Hands On Ml :
 
+
+
+**Try Out Working Website Here: https://handsonml.herokuapp.com/**
+
+
+
 #### CREATE YOUR OWN MACHINE LEARNING MODEL ON WEBSITE 
 
 Website consists of following pages :
@@ -82,7 +88,7 @@ Website consists of following pages :
 
 - Here performance of model is determined . The performance of model is checked for all algorithms because user wants to  know which algorithm gives better accuracy.
 
-Classification  Evaluation Metrics :
+Classification  Evaluation Metrics : (All except log loss and confusion matrix used)
 
 ![Six Popular Classification Evaluation Metrics In Machine Learning](https://i1.wp.com/dataaspirant.com/wp-content/uploads/2020/08/2_6_classification_evaluation_metrics.png?resize=554%2C397&ssl=1)
 
@@ -104,13 +110,9 @@ REGRESSION EVALUATION METRICS :
 
 - User  already  had created many projects and if he/she wants to revisit particular project and check the performance of that model, this page helps user to revisit by providing essential data of that model.
 
-###### MODEL INFERENCE :
 
-- Here user has to provide name of project &  he /she can give new data for prediction  according to the same format of training data .
 
-- The model predicts value for new data & value will be displayed.
-
-  ## DATABASE
+## DATABASE
 
 SQLite is a C-language library that implements a **[small](https://www.sqlite.org/footprint.html), [fast](https://www.sqlite.org/fasterthanfs.html), [self-contained](https://www.sqlite.org/selfcontained.html),  [high-reliability](https://www.sqlite.org/hirely.html), [full-featured](https://www.sqlite.org/fullsql.html),** SQL database engine. 
 
@@ -118,17 +120,13 @@ SQLite is a C-language library that implements a **[small](https://www.sqlite.or
 
 ## MODULES AND PACKAGES 
 
-Modules & Packages used are :
+Main Modules & Packages used are :
 
 1. PANDAS
-
 2. NUMPY
-
 3. SK-LEARN
-
 4. PICKLE
-
-
+5. Flask
 
 
 ## HOW THIS WEBSITE IS USEFUL FOR USERS ?

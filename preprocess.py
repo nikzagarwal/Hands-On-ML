@@ -4,48 +4,43 @@ def cleanpy(cols,changetype,encodecol,scaling,scalingcol,targetcol,dftest,cleand
     import numpy as np
     from sklearn import preprocessing
     import os
+    cols=cols
+    changetype=changetype
+    encodecol=encodecol
+    scaling=scaling
+    scalingcol=scalingcol
+    targetcol=[targetcol]
+    dftest=""
 
     df=pd.read_csv(rawdatapath)
-    origcol=df.columns
-
-    if(cols!=""):
-        cols=cols.split(",")
-        cols = list(map(int, cols))
-    if(encodecol!=""):
-        encodecol=encodecol.split(",")
-        encodecol = list(map(int, encodecol))
-    if(scalingcol!=""):
-        scalingcol=scalingcol.split(",")
-        scalingcol = list(map(int, scalingcol))
-    targetcol = list(map(int, targetcol))
-
     #feature scaling
-    if(scalingcol!=""):
+    if(scalingcol[0]!="none"):
         if scaling=='standarization':
             for feature in scalingcol:
-                df.iloc[:,feature] = (df.iloc[:,feature] - df.iloc[:,feature].mean()) / (df.iloc[:,feature].std())
+                df[feature] = (df[feature] - df[feature].mean()) / (df[feature].std())
         else:
-            x = df.iloc[:,scalingcol].values #returns a numpy array
+            x = df[scalingcol].values #returns a numpy array
             min_max_scaler = preprocessing.MinMaxScaler()
             x_scaled = min_max_scaler.fit_transform(x)
-            df.iloc[:,scalingcol]= x_scaled
+            df[scalingcol]= x_scaled
 
     #encoding
+   
     le = preprocessing.LabelEncoder()
-    if(encodecol!=""):
+    if(encodecol[0]!="none"):
         if changetype=="labelencode":
-            featurex=df.iloc[:,encodecol]
+            featurex=df[encodecol]
             featurex=featurex.apply(le.fit_transform)
             features=featurex.columns
             for feature in features:
                 df.drop([feature],axis=1,inplace=True)
                 df=pd.concat([df,featurex[feature]],axis=1)
         else:
-            dummy=pd.get_dummies(df.iloc[:,encodecol])
+            dummy=pd.get_dummies(df[encodecol])
             df=pd.concat([df,dummy],axis=1)
-            df.drop(origcol[encodecol],axis=1,inplace=True)
-    if df[df.iloc[:,targetcol].columns[0]].dtype==object:
-        featurex=df.iloc[:,targetcol]
+            df.drop(encodecol,axis=1,inplace=True)
+    if df[df[targetcol].columns[0]].dtype==object:
+        featurex=df[targetcol]
         featurex=featurex.apply(le.fit_transform)
         features=featurex.columns
         for feature in features:
@@ -53,8 +48,8 @@ def cleanpy(cols,changetype,encodecol,scaling,scalingcol,targetcol,dftest,cleand
              df=pd.concat([df,featurex[feature]],axis=1) 
 
     # drop columns
-    if(cols!=""):
-        df=df.drop(origcol[cols], axis = 1)
+    if(cols[0]!="none"):
+        df=df.drop(cols, axis = 1)
 
 
     #  mandatory cleaning
@@ -75,16 +70,17 @@ def cleanpy(cols,changetype,encodecol,scaling,scalingcol,targetcol,dftest,cleand
     else:
         dftrain=df
     #target variable seperation
-    ytrain=pd.DataFrame(dftrain[origcol[targetcol][0]])
-    ytest=pd.DataFrame(dftest[origcol[targetcol][0]])
-    dftrain.drop([origcol[targetcol][0]],axis=1,inplace=True)
-    dftest.drop([origcol[targetcol][0]],axis=1,inplace=True)
+    ytrain=pd.DataFrame(dftrain[targetcol])
+    ytest=pd.DataFrame(dftest[targetcol])
+    dftrain.drop(targetcol,axis=1,inplace=True)
+    dftest.drop(targetcol,axis=1,inplace=True)
     
     
     dftrain.to_csv(cleandatapath+"dftrain.csv",index=None)
     dftest.to_csv(cleandatapath+"dftest.csv",index=None)
     ytrain.to_csv(cleandatapath+"ytrain.csv",index=None)
     ytest.to_csv(cleandatapath+"ytest.csv",index=None)
+
 
     
     
